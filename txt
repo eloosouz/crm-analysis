@@ -1,0 +1,3 @@
+vendas.txt
+.Rhistory
+.Rproj.user/
