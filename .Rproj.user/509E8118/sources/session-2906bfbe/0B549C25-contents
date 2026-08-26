@@ -12,3 +12,22 @@ clientes_2015 = sqldf("SELECT ID_cliente,
                        COUNT(*) AS 'frequencia',
                        AVG(Quantia_compra) AS 'quantia'
                        FROM dados GROUP BY 1")
+
+
+# 4. Segmentação dos Clientes de 2015
+clientes_2015
+
+clientes_2015$segment = "NA"
+clientes_2015$segment[which(clientes_2015$recencia >  365*3)] = "inativo"
+clientes_2015$segment[which(clientes_2015$recencia <= 365*3 & clientes_2015$recencia > 365*2)] = "frio"
+clientes_2015$segment[which(clientes_2015$recencia <= 365*2 & clientes_2015$recencia > 365*1)] = "quente"
+clientes_2015$segment[which(clientes_2015$recencia <= 365)] = "ativo"
+clientes_2015$segment[which(clientes_2015$segment == "quente" & clientes_2015$primeira_compra <= 365*2)] = "novo quente"
+clientes_2015$segment[which(clientes_2015$segment == "quente" & clientes_2015$quantia < 100)] = "quente baixo valor"
+clientes_2015$segment[which(clientes_2015$segment == "quente" & clientes_2015$quantia > 100)] = "quente alto valor"
+clientes_2015$segment[which(clientes_2015$segment == "ativo" & clientes_2015$primeira_compra <= 365)] = "novo ativo"
+clientes_2015$segment[which(clientes_2015$segment == "ativo" & clientes_2015$quantia < 100)] = "ativo baixo valor"
+clientes_2015$segment[which(clientes_2015$segment == "ativo" & clientes_2015$quantia > 100)] = "ativo alto valor"
+clientes_2015$segment = factor(x = clientes_2015$segment, levels = c("inativo", "frio", "quente baixo valor", "quente alto valor", "novo quente", "ativo baixo valor", "ativo alto valor", "novo ativo"))
+
+
